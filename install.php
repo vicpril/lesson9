@@ -19,6 +19,17 @@ $smarty->compile_dir = $smarty_dir . 'templates_c';
 $smarty->cache_dir = $smarty_dir . 'cache';
 $smarty->config_dir = $smarty_dir . 'configs';
 
+function parceQuery ($str, $i, $j) {
+    while ($i<=strlen($str)) {
+        if ($str[$i] == ';' && substr($str, $i-5, 6) !== '&quot;') {
+            $query = substr($str, $j, $i-$j+1);
+            mysql_query($query) or die("<br>Не удалось выполнить запрос ". mysql_error());
+            $j = $i+1;
+        }
+        $i++;
+    }
+}
+
 if (isset($_POST['button_install'])) {
     $project_root = $_SERVER['DOCUMENT_ROOT'];
     $dump_dir = $project_root . '/dump_db/';
@@ -38,8 +49,7 @@ if (isset($_POST['button_install'])) {
     } else {
         $query = file_get_contents($filename);
     }
-
-    mysql_query($query, $db);
+    parceQuery($query, 0, 0);
     
     $smarty->display('install_ok.tpl');
 } else {
