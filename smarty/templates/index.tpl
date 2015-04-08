@@ -15,13 +15,14 @@
         </div>
         <div>
             <label>
-                <input type="checkbox" value="checked" name="allow_mails" {$name.allow_mails|default:''}>
+                <input type='hidden' value='{$name.allow_mails|default:' '}' name="allow_mails">
+                <input type="checkbox" value="checked" name="allow_mails" {$name.allow_mails|default:' '}>
                 <span>Я не хочу получать вопросы по объявлению по e-mail</span>
             </label> 
         </div>
         <div>
             <label>Номер телефона</label>
-            <input type="text" value="{$name.phone|default:''}" name="phone">
+            <input type="text" maxlength="11" value="{$name.phone|default:''}" name="phone">
         </div>
         <div>
             <label>Город</label>

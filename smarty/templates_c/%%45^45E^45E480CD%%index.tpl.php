@@ -1,7 +1,7 @@
-<?php /* Smarty version 2.6.28, created on 2015-04-05 16:30:49
+<?php /* Smarty version 2.6.28, created on 2015-04-08 16:38:02
          compiled from index.tpl */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
-smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'index.tpl', 1, false),array('function', 'html_radios', 'index.tpl', 6, false),array('function', 'html_options', 'index.tpl', 30, false),array('function', 'html_table', 'index.tpl', 64, false),)), $this); ?>
+smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'index.tpl', 1, false),array('function', 'html_radios', 'index.tpl', 6, false),array('function', 'html_options', 'index.tpl', 31, false),array('function', 'html_table', 'index.tpl', 65, false),)), $this); ?>
 <?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => ($this->_tpl_vars['header_tpl']).".tpl", 'smarty_include_vars' => array('title' => $this->_tpl_vars['title'],'name' => ((is_array($_tmp=@$this->_tpl_vars['name']['title'])) ? $this->_run_mod_handler('default', true, $_tmp, '') : smarty_modifier_default($_tmp, '')))));
 $this->_tpl_vars = $_smarty_tpl_vars;
@@ -26,14 +26,16 @@ unset($_smarty_tpl_vars);
         </div>
         <div>
             <label>
-                <input type="checkbox" value="checked" name="allow_mails" <?php echo ((is_array($_tmp=@$this->_tpl_vars['name']['allow_mails'])) ? $this->_run_mod_handler('default', true, $_tmp, '') : smarty_modifier_default($_tmp, '')); ?>
+                <input type='hidden' value='<?php echo ((is_array($_tmp=@$this->_tpl_vars['name']['allow_mails'])) ? $this->_run_mod_handler('default', true, $_tmp, ' ') : smarty_modifier_default($_tmp, ' ')); ?>
+' name="allow_mails">
+                <input type="checkbox" value="checked" name="allow_mails" <?php echo ((is_array($_tmp=@$this->_tpl_vars['name']['allow_mails'])) ? $this->_run_mod_handler('default', true, $_tmp, ' ') : smarty_modifier_default($_tmp, ' ')); ?>
 >
                 <span>Я не хочу получать вопросы по объявлению по e-mail</span>
             </label> 
         </div>
         <div>
             <label>Номер телефона</label>
-            <input type="text" value="<?php echo ((is_array($_tmp=@$this->_tpl_vars['name']['phone'])) ? $this->_run_mod_handler('default', true, $_tmp, '') : smarty_modifier_default($_tmp, '')); ?>
+            <input type="text" maxlength="11" value="<?php echo ((is_array($_tmp=@$this->_tpl_vars['name']['phone'])) ? $this->_run_mod_handler('default', true, $_tmp, '') : smarty_modifier_default($_tmp, '')); ?>
 " name="phone">
         </div>
         <div>

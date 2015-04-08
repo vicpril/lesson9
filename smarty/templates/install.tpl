@@ -14,7 +14,7 @@
             <DIV>
                 <label><b>User name:</b></label>
                 <BR>
-                <input type="text" maxlength="40" value="vicpril" name="user_name">
+                <input type="text" maxlength="40" value="test" name="user_name">
             </DIV>
             <DIV>
                 <label><b>Password:</b></label>
@@ -24,7 +24,7 @@
             <DIV>
                 <label><b>Database:</b></label>
                 <BR>
-                <input type="text" maxlength="40" value="lesson_9" name="database_name">
+                <input type="text" maxlength="40" value="test" name="database_name">
             </DIV>
             <DIV>
                 <input type="submit" name="button_install" value="Install">
