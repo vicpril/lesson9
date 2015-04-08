@@ -36,19 +36,14 @@ function getListOfExplanations($explanations) {
 
 function processingQuery($array) {
     foreach ($array as $key => &$value) {
-        $query[$key] = trim(htmlspecialchars($value), ' .,\|/*-+');
+        $query[$key] = trim(htmlspecialchars(strip_tags($value)), ' .,\|/*-+');
     }
     $query['price'] = (float) $query['price'];
     return $query;
 }
 
 // Main block
-
 $explanations = get_explanations_from_db();
-
-$cities = getCitiesList();
-$categories = getCategoriesList();
-
 if (isset($_GET['show']) && isset($explanations[$_GET['show']])) {
     $show = $_GET['show'];
     $name = $explanations[$show];
@@ -64,20 +59,19 @@ $id = (isset($_GET['id'])) ? $_GET['id'] : '';
 
 if (isset($_GET['delete'])) {
     delete_explanation_from_db($_GET['delete']);
-    $explanations = get_explanations_from_db();
 }
 
 if (isset($_POST['button_add'])) {
     $ads = processingQuery($_POST);
     add_explanation_into_db($ads, $id);
-    $explanations = get_explanations_from_db();
 }
 
+$explanations = get_explanations_from_db();
 $listOfExplanations = getListOfExplanations($explanations);
 
 $smarty->assign('private_radios', array('0' => 'Частное лицо', '1' => 'Компания'));
-$smarty->assign('cities', $cities);
-$smarty->assign('categories', $categories);
+$smarty->assign('cities', getCitiesList());
+$smarty->assign('categories', getCategoriesList());
 $smarty->assign('list', $listOfExplanations);
 $smarty->assign('tr', array('bgcolor="#ffffff"', 'bgcolor="#E7F5FE"'));
 

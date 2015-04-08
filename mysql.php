@@ -3,33 +3,41 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 ini_set('display_errors', 1);
 header("Content-Type: text/html; charset=utf-8");
 
-$db = mysql_connect('localhost', 'vicpril', '123') or die ('MySQL сервер недоступен '. mysql_error());
+$server_name = (isset($_POST['server_name'])) ? $_POST['server_name'] : 'localhost'; 
+$database_name = (isset($_POST['database_name'])) ? $_POST['database_name'] : 'test'; 
+$user_name = (isset($_POST['user_name'])) ? $_POST['user_name'] : 'test'; 
+$password = (isset($_POST['password'])) ? $_POST['password'] : '123'; 
+
+$db = mysql_connect($server_name, $user_name, $password) or die ('MySQL сервер недоступен '. mysql_error());
 mysql_query("SET NAMES utf8");
 
 //echo 'Соединение с БД установлено';
 
-mysql_select_db('lesson_9', $db) or die('Не удолось выбрать БД '. mysql_error());
+mysql_select_db($database_name, $db) or die('Не удолось выбрать БД '. mysql_error());
 
 //echo ' БД выбрана';
 
-function getCitiesList ($table = 'cities_list') {
-    $query = mysql_query("SELECT * FROM $table");
+function getCitiesList () {
+    $query = mysql_query("SELECT * FROM cities_list");
     while ($row = mysql_fetch_assoc($query)) {
         $cities [$row['index']] = $row['city'];
     }
     return $cities;
 }
 
-function getCategoriesList($table = 'categories_list') {
-    $query = mysql_query("select * from $table");
+function getCategoriesList() {
+    $query = mysql_query("SELECT t2.index, t2.category AS cat, t1.category AS groupe
+                        FROM categories_list AS t1
+                        LEFT JOIN categories_list AS t2 ON t2.parent_id = t1.index
+                        WHERE t2.parent_id is not null");
     while ($row = mysql_fetch_assoc($query)) {
-        $categories [$row['group']][$row['index']] = $row['category'];
+        $categories [$row['groupe']][$row['index']] = $row['cat'];
     }
     return $categories;
 }
 
-function get_explanations_from_db($table = 'explanations') {
-    $query = mysql_query("SELECT * FROM $table");
+function get_explanations_from_db() {
+    $query = mysql_query("SELECT * FROM explanations");
     while ($row = mysql_fetch_assoc($query) ) {
         $explanations[$row['id']] = $row;
     }
@@ -40,19 +48,15 @@ function get_explanations_from_db($table = 'explanations') {
     }
 }
 
-function add_explanation_into_db($exp, $id, $table = 'explanations') {
-    if ($id == '') {
-        mysql_query("INSERT INTO `explanations` (`id`) VALUES ('')") or die("<br>Insert abort ".mysql_error());
-        $id = mysql_insert_id();
-    }
-    unset ($exp['button_add']);
-    foreach ($exp as $key => $value) {
-        mysql_query("update explanations set $key='$value' where id = $id")or die("<br>update abort ".mysql_error());
-    }
+function add_explanation_into_db($exp, $id) {
+    mysql_query("REPLACE INTO explanations (`id`, `private`, `seller_name`, `email`, `allow_mails`, `phone`, `location_id`, `category_id`, `title`, `description`, `price`)
+                VALUES ('".$id."', '".$exp['private']."', '".$exp['seller_name']."' , '".$exp['email']."', '".$exp['allow_mails']."', '"
+                .$exp['phone']."', '".$exp['location_id']."', '".$exp['category_id']."', '".$exp['title']."', '"
+                .$exp['description']."', '".$exp['price']."')") or die("REPLACE abort ".mysql_error());
 }
 
-function delete_explanation_from_db($id, $table = 'explanations') {
-    mysql_query("delete from $table where id = $id") or die("Не удалось удалить объявление".mysql_error());
+function delete_explanation_from_db($id) {
+    mysql_query("delete from explanations where id = $id") or die("Не удалось удалить объявление".mysql_error());
 }
 
 
@@ -72,6 +76,16 @@ function delete_explanation_from_db($id, $table = 'explanations') {
 //    'Животные' => array('89' => 'Собаки', '90' => 'Кошки', '91' => 'Птицы', '92' => 'Аквариум', '93' => 'Другие животные', '94' => 'Товары для животных'),
 //    'Для бизнеса' => array('116' => 'Готовый бизнес', '40' => 'Оборудование для бизнеса'));
 //
+//$i=0;
+//$group = array_keys($categories);
+//for ($i=0 ; $i < count($categories); $i++) {
+//    
+//    $query = "REPLACE INTO category_group (`category_id`, `name`)"
+//            . "VALUES (1000+$i, '$group[$i]')";
+//    mysql_query($query) or die ("Error query ".mysql_error());
+//    
+//}
+
 //foreach ($categories as $group => $value) {
 //    foreach ($value as $key => $cat) {
 //        $insert_sq = "INSERT INTO `categories_list` (`index`, `category`, `group`) "
