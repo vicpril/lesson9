@@ -1,23 +1,59 @@
 <?php
+
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 ini_set('display_errors', 1);
 header("Content-Type: text/html; charset=utf-8");
 
-$server_name = (isset($_POST['server_name'])) ? $_POST['server_name'] : 'localhost'; 
-$database_name = (isset($_POST['database_name'])) ? $_POST['database_name'] : 'test'; 
-$user_name = (isset($_POST['user_name'])) ? $_POST['user_name'] : 'test'; 
-$password = (isset($_POST['password'])) ? $_POST['password'] : '123'; 
+$project_root = $_SERVER['DOCUMENT_ROOT'];
+$smarty_dir = $project_root . '/smarty/';
+$mysql_dir = $project_root;
 
-$db = mysql_connect($server_name, $user_name, $password) or die ('MySQL сервер недоступен '. mysql_error());
-mysql_query("SET NAMES utf8");
+function user_initialization($smarty) {
+    $filename_user = 'user.php';
+        
+    if (!file_exists($filename_user)) {
+        
+        if (!isset($_POST['button_install'])) {
+            $smarty->assign('title', 'Sing IN');
+            $smarty->assign('action', 'index.php');
+            $smarty->display('install.tpl');
+            exit;
+        }
+        
+        $user['db_name'] = $_POST['database_name'];
+        $user['s_name'] = $_POST['server_name'];
+        $user['u_name'] = $_POST['user_name'];
+        $user['pas'] = $_POST['password'];
+        if (!file_put_contents($filename_user, serialize($user))) {
+            exit('Ошибка: не удалось записать фаил ' . $filename_user);
+        }
+    }
+    return $filename_user;
+}
 
-//echo 'Соединение с БД установлено';
+function db_connect($smarty) {
+    $filename_user = user_initialization($smarty);
 
-mysql_select_db($database_name, $db) or die('Не удолось выбрать БД '. mysql_error());
+        if (!file_get_contents($filename_user)) {
+            exit('Ошибка: неверный формат файла ' . $filename_user);
+        }
+        $user = unserialize(file_get_contents($filename_user));
 
-//echo ' БД выбрана';
+    $db = mysql_connect($user['s_name'], $user['u_name'], $user['pas']) or die('MySQL сервер недоступен ' . mysql_error(). unlink($filename_user));
+    mysql_query("SET NAMES utf8");
+    //echo 'Соединение с БД установлено';
+    mysql_select_db($user['db_name'], $db) or die('Не удолось выбрать БД ' . mysql_error(). unlink($filename_user));
+    //echo ' БД выбрана';
+    
+    return $user;
+}
 
-function getCitiesList () {
+function sing_out ($smarty) {
+    unlink('user.php');
+    db_connect($smarty);
+}
+
+function getCitiesList() {
     $query = mysql_query("SELECT * FROM cities_list");
     while ($row = mysql_fetch_assoc($query)) {
         $cities [$row['index']] = $row['city'];
@@ -37,8 +73,8 @@ function getCategoriesList() {
 }
 
 function get_explanations_from_db() {
-    $query = mysql_query("SELECT * FROM explanations");
-    while ($row = mysql_fetch_assoc($query) ) {
+    $query = mysql_query("SELECT * FROM explanations ORDER BY id");
+    while ($row = mysql_fetch_assoc($query)) {
         $explanations[$row['id']] = $row;
     }
     if (isset($explanations)) {
@@ -50,15 +86,14 @@ function get_explanations_from_db() {
 
 function add_explanation_into_db($exp, $id) {
     mysql_query("REPLACE INTO explanations (`id`, `private`, `seller_name`, `email`, `allow_mails`, `phone`, `location_id`, `category_id`, `title`, `description`, `price`)
-                VALUES ('".$id."', '".$exp['private']."', '".$exp['seller_name']."' , '".$exp['email']."', '".$exp['allow_mails']."', '"
-                .$exp['phone']."', '".$exp['location_id']."', '".$exp['category_id']."', '".$exp['title']."', '"
-                .$exp['description']."', '".$exp['price']."')") or die("REPLACE abort ".mysql_error());
+                VALUES ('" . $id . "', '" . $exp['private'] . "', '" . $exp['seller_name'] . "' , '" . $exp['email'] . "', '" . $exp['allow_mails'] . "', '"
+                    . $exp['phone'] . "', '" . $exp['location_id'] . "', '" . $exp['category_id'] . "', '" . $exp['title'] . "', '"
+                    . $exp['description'] . "', '" . $exp['price'] . "')") or die("REPLACE abort " . mysql_error());
 }
 
 function delete_explanation_from_db($id) {
-    mysql_query("delete from explanations where id = $id") or die("Не удалось удалить объявление".mysql_error());
+    mysql_query("delete from explanations where id = $id") or die("Не удалось удалить объявление" . mysql_error());
 }
-
 
 // заполнение таблиц городов и категорий в БД
 // 

@@ -2,10 +2,10 @@
 
 <HTML>
     <HEAD>
-        <TITLE>Install dump BD</TITLE>
+        <TITLE>{$title}</TITLE>
     </HEAD>
     <BODY>
-        <form  method="post" accept-charset="utf-8" action="install.php">
+        <form  method="post" accept-charset="utf-8" action="{$action}">
             <DIV>
                 <label><b>Server name:</b></label>
                 <BR>
@@ -27,7 +27,7 @@
                 <input type="text" maxlength="40" value="test" name="database_name">
             </DIV>
             <DIV>
-                <input type="submit" name="button_install" value="Install">
+                <input type="submit" name="button_install" value="{$title}">
             </DIV>
         </form>
     </BODY>

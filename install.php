@@ -19,6 +19,18 @@ $smarty->compile_dir = $smarty_dir . 'templates_c';
 $smarty->cache_dir = $smarty_dir . 'cache';
 $smarty->config_dir = $smarty_dir . 'configs';
 
+function dropOldTables($db) {
+    mysql_query("SET FOREIGN_KEY_CHECKS = 0");
+    $query = mysql_query("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') AS `drop` "
+                        ."FROM information_schema.tables "
+                        ."WHERE table_schema = '$db'") or die (mysql_error());
+    
+    while ($row = mysql_fetch_assoc($query)){
+        mysql_query($row['drop']) or die (mysql_error());
+    }
+    mysql_query("SET FOREIGN_KEY_CHECKS = 1");
+}
+
 function parceDump ($dump_filename, $i = 0, $j = 0) {
     $dump = file($dump_filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     
@@ -28,7 +40,7 @@ function parceDump ($dump_filename, $i = 0, $j = 0) {
         }
     }
     $str = implode('', $dump);
-    $str = htmlspecialchars_decode($str);
+//    $str = htmlspecialchars_decode($str);
     while ($i<=strlen($str)-1) {
         if ($str[$i] == ';') {
             $query = substr($str, $j, $i-$j);
@@ -39,38 +51,32 @@ function parceDump ($dump_filename, $i = 0, $j = 0) {
     }
 }
 
+//
+// Main block
+//
+
 if (isset($_POST['button_install'])) {
-    $database_name = $_POST['database_name'];
-    $server_name = $_POST['server_name'];
-    $user_name = $_POST['user_name'];
-    $password = $_POST['password'];
+    include ($mysql_dir.'/mysql.php');
     
-    $project_root = $_SERVER['DOCUMENT_ROOT'];
+    $user = db_connect($smarty);
+    
     $dump_dir = $project_root . '/dump_db/';
     $filename = $dump_dir . 'test.sql';
-
-    $db = mysql_connect($server_name, $user_name, $password)
-            or die('MySQL сервер недоступен ' . mysql_error());
-    mysql_query("SET NAMES utf8");
-
-    mysql_select_db($database_name, $db) or die('Не удолось выбрать БД ' . mysql_error());
-
+    
     if (!file_exists($filename)) {
         exit('Дамп базы не найден');
     }
     if (!file($filename)) {
         exit('Ошибка: неверный формат файла ' . $filename);
     } else {
+        dropOldTables($user['db_name']);
         parceDump($filename);
     }
     
-    $smarty->assign('server_name', $server_name);
-    $smarty->assign('database_name', $database_name);
-    $smarty->assign('user_name', $user_name);
-    $smarty->assign('password', $password);
-    
     $smarty->display('install_ok.tpl');
 } else {
+    $smarty->assign('title', 'Install dump DB');
+    $smarty->assign('action','install.php');
     $smarty->display('install.tpl');
 }
 

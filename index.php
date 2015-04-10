@@ -21,8 +21,11 @@ $smarty->cache_dir = $smarty_dir . 'cache';
 $smarty->config_dir = $smarty_dir . 'configs';
 
 require($mysql_dir . '/mysql.php');
+db_connect($smarty);
 
+//
 // Functions
+//
 function getListOfExplanations($explanations) {
     $list = array();
     foreach ($explanations as $key => $value) {
@@ -36,25 +39,19 @@ function getListOfExplanations($explanations) {
 
 function processingQuery($array) {
     foreach ($array as $key => &$value) {
-        $query[$key] = trim(htmlspecialchars(strip_tags($value)), ' .,\|/*-+');
+        $query[$key] = trim( mysql_real_escape_string(strip_tags($value)), ' .,\|/*-+"');
     }
     $query['price'] = (float) $query['price'];
     return $query;
 }
 
+//
 // Main block
-$explanations = get_explanations_from_db();
-if (isset($_GET['show']) && isset($explanations[$_GET['show']])) {
-    $show = $_GET['show'];
-    $name = $explanations[$show];
-    $smarty->assign('header_tpl', 'header_exp');
-    $smarty->assign('title', 'Объявление');
-    $smarty->assign('show', $show);
-    $smarty->assign('name', $name);
-} else {
-    $smarty->assign('header_tpl', 'header');
-    $smarty->assign('title', 'Доска объявлений');
+//
+if (isset($_POST['button_singout'])){
+    sing_out($smarty);
 }
+
 $id = (isset($_GET['id'])) ? $_GET['id'] : '';
 
 if (isset($_GET['delete'])) {
@@ -67,6 +64,23 @@ if (isset($_POST['button_add'])) {
 }
 
 $explanations = get_explanations_from_db();
+
+if (isset($_GET['show']) && isset($explanations[$_GET['show']])) {
+    $show = $_GET['show'];
+    $name = $explanations[$show];
+//    foreach ($name as &$value) {                // убрать экранирующие символы
+//        $value = stripslashes($value);
+//    }
+    $smarty->assign('header_tpl', 'header_exp');
+    $smarty->assign('title', 'Объявление');
+    $smarty->assign('show', $show);
+    $smarty->assign('name', $name);
+} else {
+    $smarty->assign('header_tpl', 'header');
+    $smarty->assign('title', 'Доска объявлений');
+}
+
+
 $listOfExplanations = getListOfExplanations($explanations);
 
 $smarty->assign('private_radios', array('0' => 'Частное лицо', '1' => 'Компания'));

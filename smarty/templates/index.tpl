@@ -15,7 +15,7 @@
         </div>
         <div>
             <label>
-                <input type='hidden' value='{$name.allow_mails|default:' '}' name="allow_mails">
+                <input type='hidden' value=' ' name="allow_mails">
                 <input type="checkbox" value="checked" name="allow_mails" {$name.allow_mails|default:' '}>
                 <span>Я не хочу получать вопросы по объявлению по e-mail</span>
             </label> 
@@ -52,12 +52,17 @@
         </div>
         <div>
             {if !isset($show)}
-                <input type="submit" name="button_add" value="Подать объявление" formaction="index.php?show=17">
+                <input type="submit" name="button_add" value="Подать объявление" formaction="index.php">
             {else}
                 <input type="submit" name="button_add" value="Изменить объявление" formaction="index.php?id={$show}">
                 <br>
                 <button formaction="index.php">Отмена</button>
             {/if}
+        </div>
+        <br>
+        <div>
+            <button button name="button_singout" formaction="index.php">Sing OUT</button>
+            <button formaction="install.php">Install dump DB</button>
         </div>
     </form>
 

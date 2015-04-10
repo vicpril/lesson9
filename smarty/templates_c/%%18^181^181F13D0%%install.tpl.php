@@ -1,13 +1,15 @@
-<?php /* Smarty version 2.6.28, created on 2015-04-06 18:00:15
+<?php /* Smarty version 2.6.28, created on 2015-04-10 03:36:13
          compiled from install.tpl */ ?>
 <!DOCTYPE HTML>
 
 <HTML>
     <HEAD>
-        <TITLE>Install dump BD</TITLE>
+        <TITLE><?php echo $this->_tpl_vars['title']; ?>
+</TITLE>
     </HEAD>
     <BODY>
-        <form  method="post" accept-charset="utf-8" action="install.php">
+        <form  method="post" accept-charset="utf-8" action="<?php echo $this->_tpl_vars['action']; ?>
+">
             <DIV>
                 <label><b>Server name:</b></label>
                 <BR>
@@ -29,7 +31,8 @@
                 <input type="text" maxlength="40" value="test" name="database_name">
             </DIV>
             <DIV>
-                <input type="submit" name="button_install" value="Install">
+                <input type="submit" name="button_install" value="<?php echo $this->_tpl_vars['title']; ?>
+">
             </DIV>
         </form>
     </BODY>
