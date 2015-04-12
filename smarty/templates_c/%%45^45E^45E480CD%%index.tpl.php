@@ -1,7 +1,7 @@
-<?php /* Smarty version 2.6.28, created on 2015-04-10 03:34:38
+<?php /* Smarty version 2.6.28, created on 2015-04-12 09:43:27
          compiled from index.tpl */ ?>
 <?php require_once(SMARTY_CORE_DIR . 'core.load_plugins.php');
-smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'index.tpl', 1, false),array('function', 'html_radios', 'index.tpl', 6, false),array('function', 'html_options', 'index.tpl', 31, false),array('function', 'html_table', 'index.tpl', 70, false),)), $this); ?>
+smarty_core_load_plugins(array('plugins' => array(array('modifier', 'default', 'index.tpl', 1, false),array('function', 'html_radios', 'index.tpl', 6, false),array('function', 'html_options', 'index.tpl', 31, false),array('function', 'html_table', 'index.tpl', 66, false),)), $this); ?>
 <?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => ($this->_tpl_vars['header_tpl']).".tpl", 'smarty_include_vars' => array('title' => $this->_tpl_vars['title'],'name' => ((is_array($_tmp=@$this->_tpl_vars['name']['title'])) ? $this->_run_mod_handler('default', true, $_tmp, '') : smarty_modifier_default($_tmp, '')))));
 $this->_tpl_vars = $_smarty_tpl_vars;
@@ -79,10 +79,6 @@ unset($_smarty_tpl_vars);
             <?php endif; ?>
         </div>
         <br>
-        <div>
-            <button button name="button_singout" formaction="index.php">Sing OUT</button>
-            <button formaction="install.php">Install dump DB</button>
-        </div>
     </form>
 
     <h2>Объявления</h2>

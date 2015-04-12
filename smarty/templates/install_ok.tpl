@@ -2,14 +2,14 @@
 
 <HTML>
     <HEAD>
-        <TITLE>Dump install is OK</TITLE>
+        <TITLE>Install database</TITLE>
     </HEAD>
     <BODY>
         <form  method="post" accept-charset="utf-8" action="index.php">
             <DIV>
-                <label><b>Dump install is OK</b></label>
+                <label><b>{$message}</b></label>
                 <br>
-                <input type="submit" value="Go into site">
+                <input type="submit" value="На главную страницу!">
             </DIV>
         </form>
     </BODY>

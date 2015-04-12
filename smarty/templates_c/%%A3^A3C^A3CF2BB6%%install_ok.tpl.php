@@ -1,17 +1,18 @@
-<?php /* Smarty version 2.6.28, created on 2015-04-10 20:19:36
+<?php /* Smarty version 2.6.28, created on 2015-04-12 08:03:42
          compiled from install_ok.tpl */ ?>
 <!DOCTYPE HTML>
 
 <HTML>
     <HEAD>
-        <TITLE>Dump install is OK</TITLE>
+        <TITLE>Install database</TITLE>
     </HEAD>
     <BODY>
         <form  method="post" accept-charset="utf-8" action="index.php">
             <DIV>
-                <label><b>Dump install is OK</b></label>
+                <label><b><?php echo $this->_tpl_vars['message']; ?>
+</b></label>
                 <br>
-                <input type="submit" value="Go into site">
+                <input type="submit" value="На главную страницу!">
             </DIV>
         </form>
     </BODY>

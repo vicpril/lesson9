@@ -4,7 +4,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 ini_set('display_errors', 1);
 header("Content-Type: text/html; charset=utf-8");
 
-$project_root = $_SERVER['DOCUMENT_ROOT'];
+$project_root = __DIR__;
 $smarty_dir = $project_root . '/smarty/';
 $mysql_dir = $project_root;
 
@@ -20,8 +20,8 @@ $smarty->compile_dir = $smarty_dir . 'templates_c';
 $smarty->cache_dir = $smarty_dir . 'cache';
 $smarty->config_dir = $smarty_dir . 'configs';
 
-require($mysql_dir . '/mysql.php');
-db_connect($smarty);
+
+
 
 //
 // Functions
@@ -48,8 +48,14 @@ function processingQuery($array) {
 //
 // Main block
 //
+require($mysql_dir . '/mysql.php');
+$message = '';
+db_connect('index.php');
+db_setup($message);
+
+
 if (isset($_POST['button_singout'])){
-    sing_out($smarty);
+    sing_out();
 }
 
 $id = (isset($_GET['id'])) ? $_GET['id'] : '';
@@ -68,9 +74,9 @@ $explanations = get_explanations_from_db();
 if (isset($_GET['show']) && isset($explanations[$_GET['show']])) {
     $show = $_GET['show'];
     $name = $explanations[$show];
-//    foreach ($name as &$value) {                // убрать экранирующие символы
-//        $value = stripslashes($value);
-//    }
+    foreach ($name as &$value) {                
+        $value = htmlspecialchars($value);
+    }
     $smarty->assign('header_tpl', 'header_exp');
     $smarty->assign('title', 'Объявление');
     $smarty->assign('show', $show);

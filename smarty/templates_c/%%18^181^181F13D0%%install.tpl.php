@@ -1,38 +1,20 @@
-<?php /* Smarty version 2.6.28, created on 2015-04-10 20:22:55
+<?php /* Smarty version 2.6.28, created on 2015-04-12 08:39:49
          compiled from install.tpl */ ?>
 <!DOCTYPE HTML>
 
 <HTML>
     <HEAD>
-        <TITLE><?php echo $this->_tpl_vars['title']; ?>
-</TITLE>
+        <TITLE>Install database</TITLE>
     </HEAD>
     <BODY>
-        <form  method="post" accept-charset="utf-8" action="<?php echo $this->_tpl_vars['action']; ?>
-">
+        <form  method="post" accept-charset="utf-8" action="index.php">
             <DIV>
-                <label><b>Server name:</b></label>
-                <BR>
-                <input type="text" maxlength="40" value="localhost" name="server_name">
-            </DIV>
-            <DIV>
-                <label><b>User name:</b></label>
-                <BR>
-                <input type="text" maxlength="40" value="" name="user_name">
-            </DIV>
-            <DIV>
-                <label><b>Password:</b></label>
-                <BR>
-                <input type="text" maxlength="40" value="" name="password">
-            </DIV>
-            <DIV>
-                <label><b>Database:</b></label>
-                <BR>
-                <input type="text" maxlength="40" value="" name="database_name">
-            </DIV>
-            <DIV>
-                <input type="submit" name="button_install" value="<?php echo $this->_tpl_vars['title']; ?>
-">
+                <label><b><?php echo $this->_tpl_vars['message']; ?>
+</b></label>
+                <br>
+                
+                <input type="submit" name="Want_to_install_dump" value="Да" formaction="install.php">
+                <input type="submit" name="Want_to_install_dump" value="Нет" formaction="index.php">
             </DIV>
         </form>
     </BODY>

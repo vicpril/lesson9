@@ -4,53 +4,67 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 ini_set('display_errors', 1);
 header("Content-Type: text/html; charset=utf-8");
 
-$project_root = $_SERVER['DOCUMENT_ROOT'];
-$smarty_dir = $project_root . '/smarty/';
-$mysql_dir = $project_root;
-
-function user_initialization($smarty) {
+function user_initialization($page_from) {
+    global $smarty;
     $filename_user = 'user.php';
-        
+
     if (!file_exists($filename_user)) {
-        
+
         if (!isset($_POST['button_install'])) {
-            $smarty->assign('title', 'Sing IN');
-            $smarty->assign('action', 'index.php');
-            $smarty->display('install.tpl');
+            $smarty->assign('title', 'Вход в базу данных');
+            $smarty->assign('message', 'Введите данные для подключения к БД');
+            $smarty->assign('action', $page_from);
+            $smarty->display('user_ini.tpl');
             exit;
+        } else {
+            $user['db_name'] = $_POST['database_name'];
+            $user['s_name'] = $_POST['server_name'];
+            $user['u_name'] = $_POST['user_name'];
+            $user['pas'] = $_POST['password'];
+            if (!file_put_contents($filename_user, serialize($user))) {
+                exit('Ошибка: не удалось записать фаил ' . $filename_user);
+            }
         }
-        
-        $user['db_name'] = $_POST['database_name'];
-        $user['s_name'] = $_POST['server_name'];
-        $user['u_name'] = $_POST['user_name'];
-        $user['pas'] = $_POST['password'];
-        if (!file_put_contents($filename_user, serialize($user))) {
-            exit('Ошибка: не удалось записать фаил ' . $filename_user);
+    } else {
+        if (!file_get_contents($filename_user)) {
+            exit('Ошибка: неверный формат файла ' . $filename_user);
         }
     }
     return $filename_user;
 }
 
-function db_connect($smarty) {
-    $filename_user = user_initialization($smarty);
-
-        if (!file_get_contents($filename_user)) {
-            exit('Ошибка: неверный формат файла ' . $filename_user);
-        }
-        $user = unserialize(file_get_contents($filename_user));
-
-    $db = mysql_connect($user['s_name'], $user['u_name'], $user['pas']) or die('MySQL сервер недоступен ' . mysql_error(). unlink($filename_user));
-    mysql_query("SET NAMES utf8");
-    //echo 'Соединение с БД установлено';
-    mysql_select_db($user['db_name'], $db) or die('Не удолось выбрать БД ' . mysql_error(). unlink($filename_user));
-    //echo ' БД выбрана';
+function db_setup($message){
+    if ((mysql_num_rows(mysql_query("SHOW TABLES LIKE 'explanations'"))==1) &&
+        (mysql_num_rows(mysql_query("SHOW TABLES LIKE 'categories_list'"))==1) && 
+        (mysql_num_rows(mysql_query("SHOW TABLES LIKE 'cities_list'"))==1)) {
+        $message .= "<br>Таблицы установлены.";
+        return $message;
+    } else {
+        header('Location: '.'install.php');
+    }
     
-    return $user;
 }
 
-function sing_out ($smarty) {
-    unlink('user.php');
-    db_connect($smarty);
+function db_connect($page_from) {
+    global $smarty;
+    global $message;
+    
+    $filename_user = user_initialization($page_from);
+    $user = unserialize(file_get_contents($filename_user));
+    
+    $db = mysql_connect($user['s_name'], $user['u_name'], $user['pas']) or die('MySQL сервер недоступен ' 
+            . mysql_error()
+            . unlink($filename_user)
+            . '<br><a href="#" onclick="history.go(-1)">Go Back</a>' );
+    mysql_query("SET NAMES utf8");
+    $message = "Соединение с БД установлено.<br>";
+    mysql_select_db($user['db_name'], $db) or die('Не удолось выбрать БД ' 
+            . mysql_error() 
+            . unlink($filename_user)
+            . '<br><a href="#" onclick="history.go(-1)">Go Back</a>' );
+    $message .= "БД выбрана.<br>";
+    
+    return $user;
 }
 
 function getCitiesList() {

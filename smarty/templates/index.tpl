@@ -60,10 +60,6 @@
             {/if}
         </div>
         <br>
-        <div>
-            <button button name="button_singout" formaction="index.php">Sing OUT</button>
-            <button formaction="install.php">Install dump DB</button>
-        </div>
     </form>
 
     <h2>Объявления</h2>
