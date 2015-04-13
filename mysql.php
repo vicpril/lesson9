@@ -3,10 +3,11 @@
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 ini_set('display_errors', 1);
 header("Content-Type: text/html; charset=utf-8");
+$filename_user = 'user.php';
 
 function user_initialization($page_from) {
     global $smarty;
-    $filename_user = 'user.php';
+    global $filename_user;
 
     if (!file_exists($filename_user)) {
 
@@ -30,7 +31,6 @@ function user_initialization($page_from) {
             exit('Ошибка: неверный формат файла ' . $filename_user);
         }
     }
-    return $filename_user;
 }
 
 function db_setup($message){
@@ -40,16 +40,16 @@ function db_setup($message){
         $message .= "<br>Таблицы установлены.";
         return $message;
     } else {
-        header('Location: '.'install.php');
+        header('Location: install.php');
     }
     
 }
 
 function db_connect($page_from) {
-    global $smarty;
     global $message;
+    global $filename_user;
     
-    $filename_user = user_initialization($page_from);
+    user_initialization($page_from);
     $user = unserialize(file_get_contents($filename_user));
     
     $db = mysql_connect($user['s_name'], $user['u_name'], $user['pas']) or die('MySQL сервер недоступен ' 

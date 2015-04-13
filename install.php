@@ -55,6 +55,18 @@ function parceDump($dump_filename, $i = 0, $j = 0) {
 
 include ($mysql_dir . '/mysql.php');
 $message = '';
+
+if (!isset($_POST['button_install'])) {
+    $smarty->assign('title', 'Вход в базу данных');
+    $smarty->assign('message', 'Введите данные для подключения к БД');
+    $smarty->assign('action', 'install.php');
+    $smarty->display('user_ini.tpl');
+    exit;
+}   
+if (file_exists($filename_user)){
+    unlink($filename_user);
+}
+
 $user = db_connect('install.php');
 $message = db_setup($message);
 
@@ -70,7 +82,7 @@ if (!file($filename)) {
     dropOldTables($user['db_name']);
     parceDump($filename);
 }
-$smarty->assign('action','install.php');
+$smarty->assign('action', 'install.php');
 $smarty->assign('message', $message);
 $smarty->display('install_ok.tpl');
 
